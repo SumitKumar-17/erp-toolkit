@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ERP Toolkit - IITKGP",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "Sumit Kumar",
   "description": "Auto-login and CV/resume deadline highlighting for IIT Kharagpur's ERP, in one lightweight extension.",
   "homepage_url": "https://github.com/SumitKumar-17/erp-toolkit",

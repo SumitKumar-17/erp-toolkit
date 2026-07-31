@@ -1,6 +1,6 @@
 {
   "name": "erp-toolkit",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Auto-login and CV/resume deadline highlighting for IIT Kharagpur's ERP, in one lightweight extension.",
   "license": "MIT",
   "private": true,
