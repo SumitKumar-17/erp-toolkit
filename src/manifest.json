@@ -20,48 +20,27 @@
       }
     ]
   },
-  "permissions": [
-    "storage",
-    "scripting",
-    "alarms",
-    "downloads"
-  ],
-  "host_permissions": [
-    "*://erp.iitkgp.ac.in/*"
-  ],
+  "permissions": ["storage", "scripting", "alarms", "downloads"],
+  "host_permissions": ["*://erp.iitkgp.ac.in/*"],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://erp.iitkgp.ac.in/SSOAdministration/login.htm*"
-      ],
-      "js": [
-        "content/login.js"
-      ]
+      "matches": ["*://erp.iitkgp.ac.in/SSOAdministration/login.htm*"],
+      "js": ["content/login.js"]
     },
     {
-      "matches": [
-        "*://erp.iitkgp.ac.in/IIT_ERP3/showmenu.htm*"
-      ],
-      "js": [
-        "content/highlighter/index.js"
-      ],
-      "css": [
-        "content/highlighter.css"
-      ],
+      "matches": ["*://erp.iitkgp.ac.in/IIT_ERP3/showmenu.htm*"],
+      "js": ["content/highlighter/index.js"],
+      "css": ["content/highlighter.css"],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "assets/images/ext_icon.png"
-      ],
-      "matches": [
-        "*://erp.iitkgp.ac.in/*"
-      ],
+      "resources": ["assets/images/ext_icon.png"],
+      "matches": ["*://erp.iitkgp.ac.in/*"],
       "use_dynamic_url": true
     }
   ]

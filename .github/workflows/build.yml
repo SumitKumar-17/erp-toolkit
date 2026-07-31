@@ -21,12 +21,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - run: npm ci
+
+      # Capture what actually changed since the last release *before* bumping
+      # the version or creating any commits of our own, so the changelog only
+      # contains real, human-written commit messages -- this becomes the
+      # "what's new" people see in the popup's update banner.
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git tag --sort=-v:refname | head -n 1)
+          if [ -z "$PREV_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="$PREV_TAG..HEAD"
+          fi
+          {
+            echo "changelog<<CHANGELOG_EOF"
+            git log "$RANGE" --pretty=format:"- %s" --no-merges | grep -v "^- chore: release v" || echo "- Maintenance update"
+            echo ""
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
 
       # Every build that lands on main is a new, detectable version — the
       # extension's background service worker compares its own version
@@ -61,6 +83,10 @@ jobs:
           name: v${{ steps.version.outputs.version }}
           files: erp-toolkit-v${{ steps.version.outputs.version }}.zip
           body: |
+            ### What's new
+
+            ${{ steps.changelog.outputs.changelog }}
+
             ### Install
 
             Download **`erp-toolkit-v${{ steps.version.outputs.version }}.zip`** below — that's the built extension, ready for **Load unpacked**.

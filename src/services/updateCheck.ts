@@ -64,12 +64,32 @@ const setStoredUpdateInfo = (info: UpdateInfo | null): Promise<void> =>
   })
 
 /**
+ * `installType` is `'normal'` when Chrome installed this from the Web Store
+ * (or a signed .crx via enterprise policy) — in that case Chrome's own
+ * updater is already doing this job, so our GitHub-based checker should
+ * stand down rather than show a second, conflicting "update available"
+ * banner. It's `'development'` for a manually "Load unpacked" install,
+ * which is the only case this checker needs to run in. Doesn't require the
+ * `management` permission — `getSelf()` is exempt.
+ */
+export const isSideloadedInstall = (): Promise<boolean> =>
+  new Promise((resolve) => {
+    chrome.management.getSelf((info) => resolve(info.installType !== 'normal'))
+  })
+
+/**
  * Fetches the latest release, compares it to the running version, and
  * updates storage + the toolbar badge accordingly. Safe to call from both
  * the background service worker (periodic alarm) and the popup (on open,
  * so users don't wait for the next alarm tick to see a fresh check).
  */
 export const performUpdateCheck = async (): Promise<UpdateInfo | null> => {
+  if (!(await isSideloadedInstall())) {
+    await setStoredUpdateInfo(null)
+    await chrome.action.setBadgeText({ text: '' })
+    return null
+  }
+
   const currentVersion = chrome.runtime.getManifest().version
   const latest = await fetchLatestRelease()
 

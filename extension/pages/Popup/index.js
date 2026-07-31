@@ -258,7 +258,17 @@
       [updateCheck_STORAGE_KEY]: info
     }, resolve);
   });
+  const isSideloadedInstall = () => new Promise(resolve => {
+    chrome.management.getSelf(info => resolve(info.installType !== "normal"));
+  });
   const performUpdateCheck = async () => {
+    if (!await isSideloadedInstall()) {
+      await setStoredUpdateInfo(null);
+      await chrome.action.setBadgeText({
+        text: ""
+      });
+      return null;
+    }
     const currentVersion = chrome.runtime.getManifest().version;
     const latest = await fetchLatestRelease();
     if (!latest || !isNewerVersion(latest.version, currentVersion)) {
@@ -362,9 +372,14 @@
   }
   async function initUpdateBanner() {
     const currentVersion = chrome.runtime.getManifest().version;
-    await performUpdateCheck();
     const versionInfo = document.getElementById("versionInfo");
     const versionInfoText = document.getElementById("versionInfoText");
+    if (!await isSideloadedInstall()) {
+      versionInfo.classList.remove("version-info--update");
+      versionInfoText.textContent = `v${currentVersion}`;
+      return;
+    }
+    await performUpdateCheck();
     const update = await getActionableUpdate();
     if (!update) {
       versionInfo.classList.remove("version-info--update");

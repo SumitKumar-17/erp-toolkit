@@ -6,7 +6,7 @@ import { encrypt } from 'services/crypto'
 import ERP from 'services/erp'
 import { getHighlighterSettings, setHighlighterSettings } from 'services/highlighterStore'
 import { sendHighlighterCommand } from 'services/messaging'
-import { dismissUpdate, getActionableUpdate, performUpdateCheck } from 'services/updateCheck'
+import { dismissUpdate, getActionableUpdate, isSideloadedInstall, performUpdateCheck } from 'services/updateCheck'
 import logToPopup from 'utils/popupLogger'
 import validateCredentials, { FieldValidationStatus } from 'utils/validateCredentials'
 
@@ -27,12 +27,20 @@ function initFooterVersion(): void {
 async function initUpdateBanner(): Promise<void> {
   const currentVersion = chrome.runtime.getManifest().version
 
+  const versionInfo = document.getElementById('versionInfo') as HTMLElement
+  const versionInfoText = document.getElementById('versionInfoText') as HTMLElement
+
+  // Installed from the Chrome Web Store (or similar) — Chrome's own updater
+  // handles this, so our GitHub-based checker has nothing useful to say.
+  if (!(await isSideloadedInstall())) {
+    versionInfo.classList.remove('version-info--update')
+    versionInfoText.textContent = `v${currentVersion}`
+    return
+  }
+
   // Re-check on every popup open rather than waiting for the next background
   // alarm tick, so a just-published release shows up immediately.
   await performUpdateCheck()
-
-  const versionInfo = document.getElementById('versionInfo') as HTMLElement
-  const versionInfoText = document.getElementById('versionInfoText') as HTMLElement
 
   const update = await getActionableUpdate()
 

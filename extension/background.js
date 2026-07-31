@@ -43,7 +43,17 @@
       [STORAGE_KEY]: info
     }, resolve);
   });
+  const isSideloadedInstall = () => new Promise(resolve => {
+    chrome.management.getSelf(info => resolve(info.installType !== "normal"));
+  });
   const performUpdateCheck = async () => {
+    if (!await isSideloadedInstall()) {
+      await setStoredUpdateInfo(null);
+      await chrome.action.setBadgeText({
+        text: ""
+      });
+      return null;
+    }
     const currentVersion = chrome.runtime.getManifest().version;
     const latest = await fetchLatestRelease();
     if (!latest || !isNewerVersion(latest.version, currentVersion)) {
