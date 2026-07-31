@@ -16,14 +16,34 @@ void initThemeAndPreferences()
 void initCredentialForm()
 void initHighlighterPanel()
 void initUpdateBanner()
+initFooterVersion()
+
+/** Always-visible footer readout — set immediately, no network round-trip needed. */
+function initFooterVersion(): void {
+  const footerVersion = document.getElementById('footerVersion') as HTMLElement
+  footerVersion.textContent = `v${chrome.runtime.getManifest().version} · © 2026`
+}
 
 async function initUpdateBanner(): Promise<void> {
+  const currentVersion = chrome.runtime.getManifest().version
+
   // Re-check on every popup open rather than waiting for the next background
   // alarm tick, so a just-published release shows up immediately.
   await performUpdateCheck()
 
+  const versionInfo = document.getElementById('versionInfo') as HTMLElement
+  const versionInfoText = document.getElementById('versionInfoText') as HTMLElement
+
   const update = await getActionableUpdate()
-  if (!update) return
+
+  if (!update) {
+    versionInfo.classList.remove('version-info--update')
+    versionInfoText.textContent = `v${currentVersion} — you're up to date`
+    return
+  }
+
+  versionInfo.classList.add('version-info--update')
+  versionInfoText.textContent = `v${currentVersion} — v${update.latestVersion} available`
 
   const banner = document.getElementById('updateBanner') as HTMLElement
   const text = document.getElementById('updateBannerText') as HTMLElement
@@ -36,7 +56,7 @@ async function initUpdateBanner(): Promise<void> {
   banner.hidden = false
 
   actionBtn.addEventListener('click', () => {
-    void downloadUpdate(update.downloadUrl, update.latestVersion)
+    void downloadUpdate(update.downloadUrl, update.releaseUrl, update.latestVersion)
   })
 
   dismissBtn.addEventListener('click', () => {
@@ -46,14 +66,18 @@ async function initUpdateBanner(): Promise<void> {
 }
 
 /**
- * Downloads the new build's zip (if the release has one attached) and jumps
- * straight to chrome://extensions so the only steps left for the user are:
- * unzip, then click the reload icon next to ERP Toolkit.
+ * Downloads the new build's zip and jumps straight to chrome://extensions so
+ * the only steps left for the user are: unzip, then click the reload icon
+ * next to ERP Toolkit. Falls back to opening the release page itself if a
+ * release was published without a zip attached (e.g. a manually-created one).
  */
-async function downloadUpdate(downloadUrl: string | null, version: string): Promise<void> {
-  if (downloadUrl) {
-    await chrome.downloads.download({ url: downloadUrl, filename: `erp-toolkit-v${version}.zip` })
+async function downloadUpdate(downloadUrl: string | null, releaseUrl: string, version: string): Promise<void> {
+  if (!downloadUrl) {
+    await chrome.tabs.create({ url: releaseUrl })
+    return
   }
+
+  await chrome.downloads.download({ url: downloadUrl, filename: `erp-toolkit-v${version}.zip` })
   await chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` })
 }
 

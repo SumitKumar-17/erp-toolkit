@@ -59,5 +59,14 @@ jobs:
         with:
           tag_name: v${{ steps.version.outputs.version }}
           name: v${{ steps.version.outputs.version }}
-          generate_release_notes: true
           files: erp-toolkit-v${{ steps.version.outputs.version }}.zip
+          body: |
+            ### Install
+
+            Download **`erp-toolkit-v${{ steps.version.outputs.version }}.zip`** below — that's the built extension, ready for **Load unpacked**.
+
+            > Ignore the auto-generated "Source code (zip)" / "(tar.gz)" links further down — GitHub adds those to every release automatically, and they contain the whole repository (source, configs, everything), not just the extension.
+
+            1. Unzip `erp-toolkit-v${{ steps.version.outputs.version }}.zip`
+            2. Open `chrome://extensions`, enable **Developer mode**
+            3. Click **Load unpacked** and select the unzipped folder

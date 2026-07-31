@@ -69,17 +69,19 @@ A small floating, draggable status widget appears on the page itself, and all fo
 
 **No Node.js. No `npm install`. No build step.** Download a folder, load it, done.
 
-| Step | Action                                                                                                                                                                        |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | Download the latest [`erp-toolkit-vX.Y.Z.zip`](https://github.com/SumitKumar-17/erp-toolkit/releases/latest) from **Releases** — or use **Code → Download ZIP** on this repo. |
-| 2    | Unzip it. Inside is a folder named **`extension`** — that's the ready-to-load extension, nothing else needed.                                                                 |
-| 3    | Open **`chrome://extensions`** (or `edge://extensions`, `brave://extensions` — any Chromium browser works identically).                                                       |
-| 4    | Turn on **Developer mode** (top-right toggle).                                                                                                                                |
-| 5    | Click **Load unpacked** and select the **`extension`** folder.                                                                                                                |
-| 6    | Click the toolbar icon and set up your login details — you're done.                                                                                                           |
+| Step | Action                                                                                                                                                      |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Go to [**Releases**](https://github.com/SumitKumar-17/erp-toolkit/releases/latest) and download **`erp-toolkit-vX.Y.Z.zip`** from the release's **Assets**. |
+| 2    | Unzip it — you get a folder (named after the zip) with `manifest.json` inside. That's the whole extension, nothing else needed.                             |
+| 3    | Open **`chrome://extensions`** (or `edge://extensions`, `brave://extensions` — any Chromium browser works identically).                                     |
+| 4    | Turn on **Developer mode** (top-right toggle).                                                                                                              |
+| 5    | Click **Load unpacked** and select the unzipped folder.                                                                                                     |
+| 6    | Click the toolbar icon and set up your login details — you're done.                                                                                         |
 
-> [!TIP]
-> Load failed or icon missing? Make sure you selected the **`extension`** folder itself (the one containing `manifest.json`), not the outer unzipped folder or the repo root.
+> [!WARNING]
+> Every GitHub release also gets automatic **"Source code (zip)"** / **"(tar.gz)"** links — that's GitHub's doing, not a download option we provide. Those contain the entire repository (source, build configs, everything), not the built extension. Always grab **`erp-toolkit-vX.Y.Z.zip`** from **Assets** specifically.
+>
+> Only want to browse the source, not install the extension? That's what **Code → Download ZIP** on the repo's main page is for — see [Building from source](#building-from-source-for-contributors).
 
 ## Setting it up
 
@@ -98,6 +100,8 @@ Instead, the popup checks GitHub every time you open it (and periodically in the
 1. Banner reads **"Update available: vX.Y.Z"**.
 2. Click **Download update** — it downloads the new ZIP _and_ opens `chrome://extensions` for you.
 3. Unzip, then click the reload icon (🔄) next to ERP Toolkit. Done.
+
+Your installed version is always visible at the bottom of the popup (next to the copyright line), and the **About** panel shows a fuller readout — "up to date" or the version you can update to.
 
 ## Why this exists
 

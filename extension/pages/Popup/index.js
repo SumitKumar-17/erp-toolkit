@@ -355,10 +355,24 @@
   void initCredentialForm();
   void initHighlighterPanel();
   void initUpdateBanner();
+  initFooterVersion();
+  function initFooterVersion() {
+    const footerVersion = document.getElementById("footerVersion");
+    footerVersion.textContent = `v${chrome.runtime.getManifest().version} · © 2026`;
+  }
   async function initUpdateBanner() {
+    const currentVersion = chrome.runtime.getManifest().version;
     await performUpdateCheck();
+    const versionInfo = document.getElementById("versionInfo");
+    const versionInfoText = document.getElementById("versionInfoText");
     const update = await getActionableUpdate();
-    if (!update) return;
+    if (!update) {
+      versionInfo.classList.remove("version-info--update");
+      versionInfoText.textContent = `v${currentVersion} — you're up to date`;
+      return;
+    }
+    versionInfo.classList.add("version-info--update");
+    versionInfoText.textContent = `v${currentVersion} — v${update.latestVersion} available`;
     const banner = document.getElementById("updateBanner");
     const text = document.getElementById("updateBannerText");
     const dismissBtn = document.getElementById("updateBannerDismiss");
@@ -368,15 +382,21 @@
     notesLink.href = update.releaseUrl;
     banner.hidden = false;
     actionBtn.addEventListener("click", () => {
-      void downloadUpdate(update.downloadUrl, update.latestVersion);
+      void downloadUpdate(update.downloadUrl, update.releaseUrl, update.latestVersion);
     });
     dismissBtn.addEventListener("click", () => {
       banner.hidden = true;
       void dismissUpdate(update.latestVersion);
     });
   }
-  async function downloadUpdate(downloadUrl, version) {
-    if (downloadUrl) await chrome.downloads.download({
+  async function downloadUpdate(downloadUrl, releaseUrl, version) {
+    if (!downloadUrl) {
+      await chrome.tabs.create({
+        url: releaseUrl
+      });
+      return;
+    }
+    await chrome.downloads.download({
       url: downloadUrl,
       filename: `erp-toolkit-v${version}.zip`
     });

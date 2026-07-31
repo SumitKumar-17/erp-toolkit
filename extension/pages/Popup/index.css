@@ -1474,6 +1474,37 @@ input:where([type='file']):focus {
   background-color: rgb(255 255 255 / 0.1);
 }
 
+  .version-info {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+  margin-top: 0.75rem;
+  border-radius: 0.375rem;
+  background-color: rgb(0 0 0 / 0.05);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  font-size: 11px;
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity, 1));
+}
+
+  .version-info:is(.dark *) {
+  background-color: rgb(255 255 255 / 0.05);
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+  .version-info--update > span {
+  font-weight: 500;
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
+}
+  .version-info--update > span:is(.dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(129 140 248 / var(--tw-text-opacity, 1));
+}
+
   /* Update banner */
   .update-banner {
   margin-left: 0.75rem;

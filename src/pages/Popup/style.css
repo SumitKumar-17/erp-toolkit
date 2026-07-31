@@ -247,6 +247,13 @@
     @apply rounded bg-black/10 px-1 dark:bg-white/10;
   }
 
+  .version-info {
+    @apply mx-3 mt-3 rounded-md bg-black/5 px-3 py-2 text-center text-[11px] text-gray-500 dark:bg-white/5 dark:text-gray-400;
+  }
+  .version-info--update > span {
+    @apply font-medium text-indigo-600 dark:text-indigo-400;
+  }
+
   /* Update banner */
   .update-banner {
     @apply mx-3 mt-3 flex flex-col gap-2 rounded-md bg-indigo-600 px-3 py-2 text-white;
