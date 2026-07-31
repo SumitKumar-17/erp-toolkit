@@ -30,18 +30,6 @@
 > [!NOTE]
 > Not published on the Chrome Web Store (yet) — that's fine, installing it takes about a minute. Jump to **[Installation](#-installation)**.
 
-## Table of contents
-
-- [What it does](#what-it-does)
-- [Installation](#-installation)
-- [Setting it up](#setting-it-up)
-- [Staying updated](#staying-updated)
-- [Why this exists](#why-this-exists)
-- [Permissions used](#permissions-used)
-- [Security notes](#security-notes)
-- [Building from source](#building-from-source-for-contributors)
-- [Contributing](#contributing)
-
 ## What it does
 
 One toolbar icon, one popup, two features:
@@ -80,8 +68,6 @@ A small floating, draggable status widget appears on the page itself, and all fo
 
 > [!WARNING]
 > Every GitHub release also gets automatic **"Source code (zip)"** / **"(tar.gz)"** links — that's GitHub's doing, not a download option we provide. Those contain the entire repository (source, build configs, everything), not the built extension. Always grab **`erp-toolkit-vX.Y.Z.zip`** from **Assets** specifically.
->
-> Only want to browse the source, not install the extension? That's what **Code → Download ZIP** on the repo's main page is for — see [Building from source](#building-from-source-for-contributors).
 
 ## Setting it up
 
@@ -101,15 +87,11 @@ Instead, the popup checks GitHub every time you open it (and periodically in the
 2. Click **Download update** — it downloads the new ZIP _and_ opens `chrome://extensions` for you.
 3. Unzip, then click the reload icon (🔄) next to ERP Toolkit. Done.
 
-Your installed version is always visible at the bottom of the popup (next to the copyright line), and the **About** panel shows a fuller readout — "up to date" or the version you can update to.
+Your installed version is always visible at the bottom of the popup, and the **About** panel shows a fuller readout — "up to date" or the version you can update to.
 
-## Why this exists
+## Privacy & permissions
 
-- **Local-only, serverless.** Nothing you enter ever leaves your browser — credentials live in `chrome.storage.local`. Network requests go only to `erp.iitkgp.ac.in` (login + security questions) and GitHub's public releases API (update checks).
-- **Minimal permissions**, each justified below.
-- **Small.** No UI frameworks in the runtime bundle — just TypeScript and a couple of small DOM helpers.
-
-## Permissions used
+Local-only, serverless — nothing you enter ever leaves your browser. Credentials live in `chrome.storage.local`; if you set a PIN, they're AES-GCM encrypted with a key derived from it via PBKDF2 (100,000 iterations), and the PIN itself is never stored. Network requests go only to `erp.iitkgp.ac.in` (login + security questions) and GitHub's public releases API (update checks) — there's no backend of ours in the loop.
 
 | Permission                        | Why                                                                                                                                |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -118,31 +100,6 @@ Your installed version is always visible at the bottom of the popup (next to the
 | `alarms`                          | Schedules the periodic "is there a newer release?" check.                                                                          |
 | `downloads`                       | Lets the "Download update" button save a new release's ZIP straight to your Downloads folder.                                      |
 | Host access to `erp.iitkgp.ac.in` | Required to run the login-autofill and deadline-highlighter content scripts, and to fetch your security questions.                 |
-
-The background service worker also calls the public `api.github.com` releases endpoint to check for updates — no extra host permission is needed for that since GitHub's API allows anonymous cross-origin reads.
-
-## Security notes
-
-- Passwords and security-question answers are stored as-is only if you don't set a PIN. If you do, they're encrypted with AES-GCM using a key derived from your PIN via PBKDF2 (100,000 iterations) — the PIN itself is never stored anywhere.
-- Nothing is sent anywhere except `erp.iitkgp.ac.in` (to log you in) and GitHub's release API (to check your version) — there's no backend of ours in the loop at all.
-
-## Building from source (for contributors)
-
-You don't need this to just use the extension — it's only for making changes.
-
-```bash
-git clone https://github.com/SumitKumar-17/erp-toolkit.git
-cd erp-toolkit
-npm install
-npm run build-dev     # rebuilds extension/ on every change (npm start to watch)
-npm run build-prod    # minified production build
-```
-
-Either command outputs to the same `extension/` folder — reload it from `chrome://extensions` after each build. CI automatically rebuilds `extension/`, bumps the version, and cuts a GitHub Release on every push to `main`.
-
-## Contributing
-
-Pull requests are welcome — please describe the change and, for anything touching the popup UI, include a screenshot. Run `npm run pretty` before committing.
 
 ## License
 
@@ -153,3 +110,5 @@ Pull requests are welcome — please describe the change and, for anything touch
 **Sumit Kumar** — [website](https://sumitk.me) · [GitHub](https://github.com/SumitKumar-17)
 
 This project merges and rewrites two of the author's earlier extensions, [`auto-login-erp`](https://github.com/SumitKumar-17/auto-login-erp) and [`erp-cv-deadline-highlighter`](https://github.com/SumitKumar-17/erp-cv-deadline-highlighter), into one actively maintained toolkit.
+
+Want to contribute? See [CONTRIBUTING.md](./CONTRIBUTING.md).
