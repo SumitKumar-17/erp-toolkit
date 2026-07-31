@@ -175,7 +175,7 @@
                 <span class="highlighter-status__dot" id="highlighterStatusDot"></span>
                 <span id="highlighterStatusText">Checking status...</span>
               </div>
-              <p class="highlighter-status__stats"><span id="highlighterProcessedCount">0</span> rows processed</p>
+              <p class="highlighter-status__stats" id="highlighterProcessedCount">0 rows processed</p>
             </div>
 
             <div class="highlighter-actions">
@@ -201,38 +201,44 @@
             <div>
               <p class="panel-group-label">Colors</p>
               <hr class="panel-group-divider" />
-              <div class="color-row">
-                <label for="colorUpcoming"><i class="color-row__swatch"></i>Upcoming (more than a day)</label>
-                <input type="color" id="colorUpcoming" />
-              </div>
-              <div class="color-row">
-                <label for="colorWarning"><i class="color-row__swatch"></i>1 day left</label>
-                <input type="color" id="colorWarning" />
-              </div>
-              <div class="color-row">
-                <label for="colorUrgent"><i class="color-row__swatch"></i>6 hours or less</label>
-                <input type="color" id="colorUrgent" />
-              </div>
-              <div class="color-row">
-                <label for="colorOverdue"><i class="color-row__swatch"></i>Overdue</label>
-                <input type="color" id="colorOverdue" />
+              <div class="color-grid">
+                <label class="color-swatch" for="colorUpcoming">
+                  <input type="color" id="colorUpcoming" />
+                  <span class="color-swatch__title">Upcoming</span>
+                  <span class="color-swatch__subtitle">&gt;24h left</span>
+                </label>
+                <label class="color-swatch" for="colorWarning">
+                  <input type="color" id="colorWarning" />
+                  <span class="color-swatch__title">1 day left</span>
+                  <span class="color-swatch__subtitle">6-24h left</span>
+                </label>
+                <label class="color-swatch" for="colorUrgent">
+                  <input type="color" id="colorUrgent" />
+                  <span class="color-swatch__title">Urgent</span>
+                  <span class="color-swatch__subtitle">&le;6h left</span>
+                </label>
+                <label class="color-swatch" for="colorOverdue">
+                  <input type="color" id="colorOverdue" />
+                  <span class="color-swatch__title">Overdue</span>
+                  <span class="color-swatch__subtitle">Deadline passed</span>
+                </label>
               </div>
             </div>
 
             <div>
               <p class="panel-group-label">Timing</p>
               <hr class="panel-group-divider" />
-              <div class="number-row">
-                <label for="refreshIntervalSeconds"
-                  ><svg><use href="../../assets/sprite.svg#sync"></use></svg>Refresh every (seconds)</label
-                >
-                <input type="number" min="1" max="60" id="refreshIntervalSeconds" />
-              </div>
-              <div class="number-row">
-                <label for="autoStopMinutes"
-                  ><svg><use href="../../assets/sprite.svg#clock"></use></svg>Auto-stop after (minutes)</label
-                >
-                <input type="number" min="1" max="60" id="autoStopMinutes" />
+              <div class="stepper-grid">
+                <div class="stepper">
+                  <svg><use href="../../assets/sprite.svg#sync"></use></svg>
+                  <input type="number" min="1" max="60" id="refreshIntervalSeconds" />
+                  <label for="refreshIntervalSeconds">Refresh (sec)</label>
+                </div>
+                <div class="stepper">
+                  <svg><use href="../../assets/sprite.svg#clock"></use></svg>
+                  <input type="number" min="1" max="60" id="autoStopMinutes" />
+                  <label for="autoStopMinutes">Auto-stop (min)</label>
+                </div>
               </div>
             </div>
 

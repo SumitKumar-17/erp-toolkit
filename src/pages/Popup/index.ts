@@ -300,6 +300,7 @@ async function initHighlighterPanel(): Promise<void> {
   const stopBtn = document.getElementById('highlighterStop') as HTMLButtonElement
   const clearBtn = document.getElementById('highlighterClear') as HTMLButtonElement
 
+  const statusBox = document.getElementById('highlighterStatusBox') as HTMLElement
   const statusDot = document.getElementById('highlighterStatusDot') as HTMLElement
   const statusText = document.getElementById('highlighterStatusText') as HTMLElement
   const processedCount = document.getElementById('highlighterProcessedCount') as HTMLElement
@@ -340,9 +341,10 @@ async function initHighlighterPanel(): Promise<void> {
   autoStopInput.onchange = () => void persist({ autoStopMinutes: Math.max(1, Number(autoStopInput.value) || 1) })
 
   const renderStatus = (isActive: boolean, rows: number, message?: string): void => {
+    statusBox.classList.toggle('highlighter-status--active', isActive)
     statusDot.classList.toggle('highlighter-status__dot--active', isActive)
     statusText.textContent = message ?? (isActive ? 'Active — monitoring deadlines' : 'Inactive')
-    processedCount.textContent = String(rows)
+    processedCount.textContent = `${rows} row${rows === 1 ? '' : 's'} processed`
     startBtn.disabled = isActive
     stopBtn.disabled = !isActive
   }

@@ -6,47 +6,104 @@
 
 <p align="center">
   Auto-login and CV/resume deadline highlighting for IIT Kharagpur's ERP, in one lightweight, local-only browser extension.
-  <br>
-  <a href="https://github.com/SumitKumar-17/erp-toolkit/issues/new">Report a bug</a>
-  ·
-  <a href="https://github.com/SumitKumar-17/erp-toolkit/issues/new">Request a feature</a>
 </p>
 
-> Not published on the Chrome Web Store yet — install directly from this repo in a few clicks, no build tools required. See [Installation](#installation) below.
+<p align="center">
+  <a href="https://github.com/SumitKumar-17/erp-toolkit/releases/latest">
+    <img src="https://img.shields.io/github/v/release/SumitKumar-17/erp-toolkit?label=latest%20release&color=5c6ac4" alt="Latest release">
+  </a>
+  <img src="https://img.shields.io/badge/install-no%20build%20step-16a34a" alt="No build step required">
+  <img src="https://img.shields.io/badge/works%20on-Chrome%20%7C%20Edge%20%7C%20Brave-4285F4" alt="Works on Chrome, Edge, Brave">
+  <a href="./LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/SumitKumar-17/erp-toolkit/releases/latest">⬇️ Download latest release</a>
+  ·
+  <a href="https://github.com/SumitKumar-17/erp-toolkit/issues/new">🐞 Report a bug</a>
+  ·
+  <a href="https://github.com/SumitKumar-17/erp-toolkit/issues/new">💡 Request a feature</a>
+</p>
+
+> [!NOTE]
+> Not published on the Chrome Web Store (yet) — that's fine, installing it takes about a minute. Jump to **[Installation](#-installation)**.
+
+## Table of contents
+
+- [What it does](#what-it-does)
+- [Installation](#-installation)
+- [Setting it up](#setting-it-up)
+- [Staying updated](#staying-updated)
+- [Why this exists](#why-this-exists)
+- [Permissions used](#permissions-used)
+- [Security notes](#security-notes)
+- [Building from source](#building-from-source-for-contributors)
+- [Contributing](#contributing)
 
 ## What it does
 
-**🔑 Auto-login** — fills and submits the ERP SSO login form for you: username, password, your three security-question answers, and (optionally) an AES-encrypted PIN-protected vault, so your password never sits in plain text in browser storage.
+One toolbar icon, one popup, two features:
 
-**🎯 Deadline Highlighter** — on the CDC placement portal, color-codes every CV/resume-deadline row across four stages — upcoming (green), 1 day left (amber), 6 hours or less (orange), overdue (red) — and drops a small floating, draggable status widget on the page so you don't have to hunt through the table. All four colors, plus the refresh/auto-stop timing, are configurable from the popup.
+### 🔑 Auto-login
 
-Both features live in a single popup, reachable from one toolbar icon.
+Fills and submits the ERP SSO login form for you — username, password, and your three security-question answers. Optionally protected by a 4-digit PIN, in which case your password and answers are AES-encrypted before being saved, so nothing sensitive ever sits in plain text in browser storage.
 
-## Installation
+### 🎯 Deadline Highlighter
 
-No Node.js, no `npm install`, no build step — just download and load the folder.
+On the CDC placement portal, color-codes every CV/resume-deadline row across four stages, so the urgent ones jump out instead of hiding in a wall of table rows:
 
-1. Go to the [**Releases**](https://github.com/SumitKumar-17/erp-toolkit/releases/latest) page and download the latest `erp-toolkit-vX.Y.Z.zip`, **or** click **Code → Download ZIP** on this repo.
-2. Unzip it. Inside, find the **`extension`** folder — that's the ready-to-load extension.
-3. Open `chrome://extensions` in Chrome (or `edge://extensions`, `brave://extensions` — any Chromium-based browser works the same way).
-4. Turn on **Developer mode** (top-right toggle).
-5. Click **Load unpacked** and select the `extension` folder.
-6. Done — click the toolbar icon to open the popup and set up your login details.
+| Stage                | Default color |
+| -------------------- | ------------- |
+| Upcoming (>24h left) | 🟢 Green      |
+| 1 day left           | 🟡 Amber      |
+| 6 hours or less      | 🟠 Orange     |
+| Overdue              | 🔴 Red        |
 
-Since this isn't distributed through the Chrome Web Store, the browser can't silently auto-update it for you — no extension loaded via **Load unpacked** can be, that's a Chrome platform restriction, not something specific to this extension. Instead, it checks GitHub in the background (and every time you open the popup) and shows a banner ("Update available: vX.Y.Z") as soon as a new version has shipped. Click **Download update** and it does two things for you automatically: downloads the new ZIP, and opens `chrome://extensions` to the right place — from there it's just unzip, then click the reload icon next to ERP Toolkit.
+A small floating, draggable status widget appears on the page itself, and all four colors — plus the refresh rate and auto-stop timing — are configurable from the popup.
+
+---
+
+## 📦 Installation
+
+**No Node.js. No `npm install`. No build step.** Download a folder, load it, done.
+
+| Step | Action                                                                                                                                                                        |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Download the latest [`erp-toolkit-vX.Y.Z.zip`](https://github.com/SumitKumar-17/erp-toolkit/releases/latest) from **Releases** — or use **Code → Download ZIP** on this repo. |
+| 2    | Unzip it. Inside is a folder named **`extension`** — that's the ready-to-load extension, nothing else needed.                                                                 |
+| 3    | Open **`chrome://extensions`** (or `edge://extensions`, `brave://extensions` — any Chromium browser works identically).                                                       |
+| 4    | Turn on **Developer mode** (top-right toggle).                                                                                                                                |
+| 5    | Click **Load unpacked** and select the **`extension`** folder.                                                                                                                |
+| 6    | Click the toolbar icon and set up your login details — you're done.                                                                                                           |
+
+> [!TIP]
+> Load failed or icon missing? Make sure you selected the **`extension`** folder itself (the one containing `manifest.json`), not the outer unzipped folder or the repo root.
 
 ## Setting it up
 
 1. Open the popup and enter your ERP roll number, then fetch your security questions and fill in your password + answers.
-2. Optionally set a 4-digit PIN — when set, your password and answers are encrypted (AES-GCM, key derived via PBKDF2) before being saved, and the PIN is asked for on each login instead of being stored anywhere.
-3. Head to **Preferences** for theme, landing page after login, and PIN-dialog style.
-4. Head to **Deadline Highlighter** to enable/disable auto-start, tweak the four status colors, and set the refresh/auto-stop timing. It only ever runs on the CDC placement page.
+2. Optionally set a 4-digit PIN — your password and answers get encrypted (AES-GCM, key derived via PBKDF2) before saving, and the PIN is asked for on each login instead of being stored anywhere.
+3. **Preferences** — theme, landing page after login, PIN-dialog style.
+4. **Deadline Highlighter** — enable/disable auto-start, tweak the four status colors, set refresh/auto-stop timing. Only ever runs on the CDC placement page.
+
+## Staying updated
+
+> [!IMPORTANT]
+> Chrome does not allow any extension loaded via **Load unpacked** to silently auto-update itself — that's a platform restriction, not a limitation of this project.
+
+Instead, the popup checks GitHub every time you open it (and periodically in the background) and shows a banner the moment a new version ships:
+
+1. Banner reads **"Update available: vX.Y.Z"**.
+2. Click **Download update** — it downloads the new ZIP _and_ opens `chrome://extensions` for you.
+3. Unzip, then click the reload icon (🔄) next to ERP Toolkit. Done.
 
 ## Why this exists
 
-- **Local-only, serverless.** Nothing you enter ever leaves your browser — credentials live in `chrome.storage.local`, and network requests go only to `erp.iitkgp.ac.in` (to fetch your security questions) and to GitHub's public releases API (to check for updates).
+- **Local-only, serverless.** Nothing you enter ever leaves your browser — credentials live in `chrome.storage.local`. Network requests go only to `erp.iitkgp.ac.in` (login + security questions) and GitHub's public releases API (update checks).
 - **Minimal permissions**, each justified below.
-- **Small.** No frameworks in the runtime bundle — just TypeScript + a couple of small DOM helpers.
+- **Small.** No UI frameworks in the runtime bundle — just TypeScript and a couple of small DOM helpers.
 
 ## Permissions used
 
@@ -55,15 +112,15 @@ Since this isn't distributed through the Chrome Web Store, the browser can't sil
 | `storage`                         | Saves your (optionally encrypted) credentials and preferences locally.                                                             |
 | `scripting`                       | Re-injects the deadline-highlighter content script if the popup is opened before it's had a chance to load on an already-open tab. |
 | `alarms`                          | Schedules the periodic "is there a newer release?" check.                                                                          |
-| `downloads`                       | Lets the "Download update" button in the popup save a new release's ZIP straight to your Downloads folder.                         |
+| `downloads`                       | Lets the "Download update" button save a new release's ZIP straight to your Downloads folder.                                      |
 | Host access to `erp.iitkgp.ac.in` | Required to run the login-autofill and deadline-highlighter content scripts, and to fetch your security questions.                 |
 
 The background service worker also calls the public `api.github.com` releases endpoint to check for updates — no extra host permission is needed for that since GitHub's API allows anonymous cross-origin reads.
 
 ## Security notes
 
-- Passwords and security-question answers are stored as-is only if you don't set a PIN. If you do set one, they're encrypted with AES-GCM using a key derived from your PIN via PBKDF2 (100,000 iterations) — the PIN itself is never stored.
-- Nothing is sent anywhere except `erp.iitkgp.ac.in` (to log you in) and GitHub's release API (to check your extension's version) — there's no backend of ours in the loop at all.
+- Passwords and security-question answers are stored as-is only if you don't set a PIN. If you do, they're encrypted with AES-GCM using a key derived from your PIN via PBKDF2 (100,000 iterations) — the PIN itself is never stored anywhere.
+- Nothing is sent anywhere except `erp.iitkgp.ac.in` (to log you in) and GitHub's release API (to check your version) — there's no backend of ours in the loop at all.
 
 ## Building from source (for contributors)
 

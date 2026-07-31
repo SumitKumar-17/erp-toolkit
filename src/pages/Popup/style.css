@@ -47,7 +47,13 @@
     @apply h-4 w-4 rounded-full border-gray-300 bg-white/20 text-indigo-600 focus:ring-1 focus:ring-indigo-500 focus:ring-offset-0;
   }
   [type='color'] {
-    @apply h-7 w-10 cursor-pointer rounded border border-gray-300 bg-transparent p-0.5 dark:border-gray-300/10;
+    @apply h-8 w-8 cursor-pointer rounded-full border-2 border-white bg-transparent p-0 shadow dark:border-black/40;
+  }
+  [type='color']::-webkit-color-swatch-wrapper {
+    @apply p-0;
+  }
+  [type='color']::-webkit-color-swatch {
+    @apply rounded-full border-none;
   }
 
   .bg-card {
@@ -269,16 +275,19 @@
 
   /* Highlighter panel */
   .highlighter-status {
-    @apply mx-3 mt-2 rounded-md bg-black/5 p-3 dark:bg-white/5;
+    @apply mx-3 mt-2 rounded-md border-l-4 border-gray-300 bg-black/5 p-3 transition-colors dark:border-gray-600 dark:bg-white/5;
+  }
+  .highlighter-status--active {
+    @apply border-green-500 bg-green-500/10 dark:bg-green-500/10;
   }
   .highlighter-status__row {
-    @apply flex items-center gap-2 font-medium;
+    @apply flex items-center gap-2 text-sm font-medium;
   }
   .highlighter-status__dot {
-    @apply h-2 w-2 rounded-full bg-gray-400 transition-colors dark:bg-gray-500;
+    @apply h-2.5 w-2.5 flex-shrink-0 rounded-full bg-gray-400 transition-colors dark:bg-gray-500;
   }
   .highlighter-status__dot--active {
-    @apply bg-green-500;
+    @apply bg-green-500 shadow-[0_0_0_3px_rgba(34,197,94,0.25)];
   }
   .highlighter-status__stats {
     @apply mt-1 text-[11px] text-gray-500 dark:text-gray-400;
@@ -289,25 +298,33 @@
   .highlighter-actions > button {
     @apply flex-1;
   }
-  .color-row {
-    @apply mx-3 flex items-center justify-between py-1.5 text-xs;
+
+  .color-grid {
+    @apply mx-3 grid grid-cols-2 gap-1.5;
   }
-  .color-row > label {
-    @apply flex items-center gap-2 text-gray-700 dark:text-gray-200;
+  .color-swatch {
+    @apply flex cursor-pointer flex-col items-center gap-1 rounded-md border border-black/5 bg-black/5 py-2 text-center transition hover:bg-black/10 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10;
   }
-  .color-row__swatch {
-    @apply inline-block h-3 w-3 rounded border border-black/10;
+  .color-swatch__title {
+    @apply text-[11px] font-medium leading-tight text-gray-700 dark:text-gray-200;
   }
-  .number-row {
-    @apply mx-3 flex items-center justify-between gap-2 py-1.5 text-xs;
+  .color-swatch__subtitle {
+    @apply text-[10px] leading-tight text-gray-500 dark:text-gray-400;
   }
-  .number-row > label {
-    @apply flex items-center gap-2 text-gray-700 dark:text-gray-200;
+
+  .stepper-grid {
+    @apply mx-3 grid grid-cols-2 gap-2;
   }
-  .number-row > label > svg {
-    @apply h-3.5 w-3.5 fill-current;
+  .stepper {
+    @apply flex flex-col items-center gap-1 rounded-md border border-black/5 bg-black/5 py-2 dark:border-white/5 dark:bg-white/5;
   }
-  .number-row > input {
-    @apply w-16 text-xs;
+  .stepper > svg {
+    @apply h-4 w-4 fill-gray-500 dark:fill-gray-400;
+  }
+  .stepper > label {
+    @apply text-[10px] text-gray-500 dark:text-gray-400;
+  }
+  .stepper > input {
+    @apply w-14 rounded border-gray-300 py-1 text-center text-xs dark:border-gray-300/10 dark:bg-white/5;
   }
 }

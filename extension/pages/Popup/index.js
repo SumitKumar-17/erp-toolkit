@@ -576,6 +576,7 @@
     const startBtn = document.getElementById("highlighterStart");
     const stopBtn = document.getElementById("highlighterStop");
     const clearBtn = document.getElementById("highlighterClear");
+    const statusBox = document.getElementById("highlighterStatusBox");
     const statusDot = document.getElementById("highlighterStatusDot");
     const statusText = document.getElementById("highlighterStatusText");
     const processedCount = document.getElementById("highlighterProcessedCount");
@@ -618,9 +619,10 @@
       autoStopMinutes: Math.max(1, Number(autoStopInput.value) || 1)
     });
     const renderStatus = (isActive, rows, message) => {
+      statusBox.classList.toggle("highlighter-status--active", isActive);
       statusDot.classList.toggle("highlighter-status__dot--active", isActive);
       statusText.textContent = message ?? (isActive ? "Active — monitoring deadlines" : "Inactive");
-      processedCount.textContent = String(rows);
+      processedCount.textContent = `${rows} row${rows === 1 ? "" : "s"} processed`;
       startBtn.disabled = isActive;
       stopBtn.disabled = !isActive;
     };
