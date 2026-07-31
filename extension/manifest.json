@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "ERP Toolkit - IITKGP",
+  "version": "0.1.0",
+  "author": "Sumit Kumar",
+  "description": "Auto-login and CV/resume deadline highlighting for IIT Kharagpur's ERP, in one lightweight extension.",
+  "homepage_url": "https://github.com/SumitKumar-17/erp-toolkit",
+  "icons": {
+    "256": "assets/images/ext_icon.png"
+  },
+  "action": {
+    "default_icon": "assets/images/ext_icon.png",
+    "default_title": "ERP Toolkit - IITKGP",
+    "default_popup": "pages/Popup/index.html",
+    "theme_icons": [
+      {
+        "light": "assets/images/ext_icon.png",
+        "dark": "assets/images/ext_icon_dark.png",
+        "size": 256
+      }
+    ]
+  },
+  "permissions": ["storage", "scripting", "alarms"],
+  "host_permissions": ["*://erp.iitkgp.ac.in/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://erp.iitkgp.ac.in/SSOAdministration/login.htm*"],
+      "js": ["content/login.js"]
+    },
+    {
+      "matches": ["*://erp.iitkgp.ac.in/IIT_ERP3/showmenu.htm*"],
+      "js": ["content/highlighter/index.js"],
+      "css": ["content/highlighter.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/images/ext_icon.png"],
+      "matches": ["*://erp.iitkgp.ac.in/*"],
+      "use_dynamic_url": true
+    }
+  ]
+}
