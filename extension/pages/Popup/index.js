@@ -216,7 +216,7 @@
     }
   };
   const REPO = "SumitKumar-17/erp-toolkit";
-  const RELEASES_API_URL = null && `https://api.github.com/repos/${REPO}/releases/latest`;
+  const RELEASES_API_URL = `https://api.github.com/repos/${REPO}/releases/latest`;
   const updateCheck_STORAGE_KEY = "updateInfo";
   const DISMISSED_KEY = "dismissedUpdateVersion";
   const parseVersion = version => version.replace(/^v/, "").split(".").map(part => parseInt(part, 10) || 0);
@@ -239,9 +239,11 @@
       if (!response.ok) return null;
       const release = await response.json();
       if (!release.tag_name || !release.html_url) return null;
+      const zipAsset = release.assets?.find(asset => asset.name?.endsWith(".zip"));
       return {
         version: release.tag_name.replace(/^v/, ""),
-        url: release.html_url
+        url: release.html_url,
+        downloadUrl: zipAsset?.browser_download_url ?? null
       };
     } catch {
       return null;
@@ -256,6 +258,31 @@
       [updateCheck_STORAGE_KEY]: info
     }, resolve);
   });
+  const performUpdateCheck = async () => {
+    const currentVersion = chrome.runtime.getManifest().version;
+    const latest = await fetchLatestRelease();
+    if (!latest || !isNewerVersion(latest.version, currentVersion)) {
+      await setStoredUpdateInfo(null);
+      await chrome.action.setBadgeText({
+        text: ""
+      });
+      return null;
+    }
+    const info = {
+      latestVersion: latest.version,
+      releaseUrl: latest.url,
+      downloadUrl: latest.downloadUrl,
+      checkedAt: Date.now()
+    };
+    await setStoredUpdateInfo(info);
+    await chrome.action.setBadgeText({
+      text: "1"
+    });
+    await chrome.action.setBadgeBackgroundColor({
+      color: "#dc2626"
+    });
+    return info;
+  };
   const getActionableUpdate = () => new Promise(resolve => {
     chrome.storage.local.get([ updateCheck_STORAGE_KEY, DISMISSED_KEY ], result => {
       const info = result[updateCheck_STORAGE_KEY];
@@ -329,18 +356,32 @@
   void initHighlighterPanel();
   void initUpdateBanner();
   async function initUpdateBanner() {
+    await performUpdateCheck();
     const update = await getActionableUpdate();
     if (!update) return;
     const banner = document.getElementById("updateBanner");
-    const link = document.getElementById("updateBannerLink");
     const text = document.getElementById("updateBannerText");
     const dismissBtn = document.getElementById("updateBannerDismiss");
+    const actionBtn = document.getElementById("updateBannerAction");
+    const notesLink = document.getElementById("updateBannerNotes");
     text.textContent = `Update available: v${update.latestVersion}`;
-    link.href = update.releaseUrl;
+    notesLink.href = update.releaseUrl;
     banner.hidden = false;
+    actionBtn.addEventListener("click", () => {
+      void downloadUpdate(update.downloadUrl, update.latestVersion);
+    });
     dismissBtn.addEventListener("click", () => {
       banner.hidden = true;
       void dismissUpdate(update.latestVersion);
+    });
+  }
+  async function downloadUpdate(downloadUrl, version) {
+    if (downloadUrl) await chrome.downloads.download({
+      url: downloadUrl,
+      filename: `erp-toolkit-v${version}.zip`
+    });
+    await chrome.tabs.create({
+      url: `chrome://extensions/?id=${chrome.runtime.id}`
     });
   }
   async function initThemeAndPreferences() {

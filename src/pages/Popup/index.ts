@@ -6,7 +6,7 @@ import { encrypt } from 'services/crypto'
 import ERP from 'services/erp'
 import { getHighlighterSettings, setHighlighterSettings } from 'services/highlighterStore'
 import { sendHighlighterCommand } from 'services/messaging'
-import { dismissUpdate, getActionableUpdate } from 'services/updateCheck'
+import { dismissUpdate, getActionableUpdate, performUpdateCheck } from 'services/updateCheck'
 import logToPopup from 'utils/popupLogger'
 import validateCredentials, { FieldValidationStatus } from 'utils/validateCredentials'
 
@@ -18,22 +18,43 @@ void initHighlighterPanel()
 void initUpdateBanner()
 
 async function initUpdateBanner(): Promise<void> {
+  // Re-check on every popup open rather than waiting for the next background
+  // alarm tick, so a just-published release shows up immediately.
+  await performUpdateCheck()
+
   const update = await getActionableUpdate()
   if (!update) return
 
   const banner = document.getElementById('updateBanner') as HTMLElement
-  const link = document.getElementById('updateBannerLink') as HTMLAnchorElement
   const text = document.getElementById('updateBannerText') as HTMLElement
   const dismissBtn = document.getElementById('updateBannerDismiss') as HTMLButtonElement
+  const actionBtn = document.getElementById('updateBannerAction') as HTMLButtonElement
+  const notesLink = document.getElementById('updateBannerNotes') as HTMLAnchorElement
 
   text.textContent = `Update available: v${update.latestVersion}`
-  link.href = update.releaseUrl
+  notesLink.href = update.releaseUrl
   banner.hidden = false
+
+  actionBtn.addEventListener('click', () => {
+    void downloadUpdate(update.downloadUrl, update.latestVersion)
+  })
 
   dismissBtn.addEventListener('click', () => {
     banner.hidden = true
     void dismissUpdate(update.latestVersion)
   })
+}
+
+/**
+ * Downloads the new build's zip (if the release has one attached) and jumps
+ * straight to chrome://extensions so the only steps left for the user are:
+ * unzip, then click the reload icon next to ERP Toolkit.
+ */
+async function downloadUpdate(downloadUrl: string | null, version: string): Promise<void> {
+  if (downloadUrl) {
+    await chrome.downloads.download({ url: downloadUrl, filename: `erp-toolkit-v${version}.zip` })
+  }
+  await chrome.tabs.create({ url: `chrome://extensions/?id=${chrome.runtime.id}` })
 }
 
 async function initThemeAndPreferences(): Promise<void> {

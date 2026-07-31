@@ -13,13 +13,15 @@
         <main class="panel-container">
           <section id="panel-home" class="panel">
             <div id="updateBanner" class="update-banner" hidden>
-              <a id="updateBannerLink" href="#" target="_blank" rel="noopener noreferrer">
+              <div class="update-banner__row">
                 <svg><use href="../../assets/sprite.svg#sync"></use></svg>
                 <span id="updateBannerText">Update available</span>
-              </a>
-              <button type="button" id="updateBannerDismiss" title="Dismiss">
-                <svg><use href="../../assets/sprite.svg#cross"></use></svg>
-              </button>
+                <button type="button" id="updateBannerDismiss" title="Dismiss">
+                  <svg><use href="../../assets/sprite.svg#cross"></use></svg>
+                </button>
+              </div>
+              <button type="button" id="updateBannerAction" class="update-banner__action">Download update</button>
+              <a id="updateBannerNotes" href="#" target="_blank" rel="noopener noreferrer">What's new?</a>
             </div>
             <div>
               <p class="panel-group-label">Quick Links</p>

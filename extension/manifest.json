@@ -20,7 +20,7 @@
       }
     ]
   },
-  "permissions": ["storage", "scripting", "alarms"],
+  "permissions": ["storage", "scripting", "alarms", "downloads"],
   "host_permissions": ["*://erp.iitkgp.ac.in/*"],
   "background": {
     "service_worker": "background.js"

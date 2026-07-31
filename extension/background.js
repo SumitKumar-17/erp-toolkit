@@ -24,9 +24,11 @@
       if (!response.ok) return null;
       const release = await response.json();
       if (!release.tag_name || !release.html_url) return null;
+      const zipAsset = release.assets?.find(asset => asset.name?.endsWith(".zip"));
       return {
         version: release.tag_name.replace(/^v/, ""),
-        url: release.html_url
+        url: release.html_url,
+        downloadUrl: zipAsset?.browser_download_url ?? null
       };
     } catch {
       return null;
@@ -41,6 +43,31 @@
       [STORAGE_KEY]: info
     }, resolve);
   });
+  const performUpdateCheck = async () => {
+    const currentVersion = chrome.runtime.getManifest().version;
+    const latest = await fetchLatestRelease();
+    if (!latest || !isNewerVersion(latest.version, currentVersion)) {
+      await setStoredUpdateInfo(null);
+      await chrome.action.setBadgeText({
+        text: ""
+      });
+      return null;
+    }
+    const info = {
+      latestVersion: latest.version,
+      releaseUrl: latest.url,
+      downloadUrl: latest.downloadUrl,
+      checkedAt: Date.now()
+    };
+    await setStoredUpdateInfo(info);
+    await chrome.action.setBadgeText({
+      text: "1"
+    });
+    await chrome.action.setBadgeBackgroundColor({
+      color: "#dc2626"
+    });
+    return info;
+  };
   const getActionableUpdate = () => new Promise(resolve => {
     chrome.storage.local.get([ STORAGE_KEY, DISMISSED_KEY ], result => {
       const info = result[STORAGE_KEY];
@@ -53,28 +80,6 @@
   }, resolve));
   const UPDATE_CHECK_ALARM = "erp-toolkit-update-check";
   const UPDATE_CHECK_PERIOD_MINUTES = 360;
-  const checkForUpdate = async () => {
-    const currentVersion = chrome.runtime.getManifest().version;
-    const latest = await fetchLatestRelease();
-    if (!latest || !isNewerVersion(latest.version, currentVersion)) {
-      await setStoredUpdateInfo(null);
-      await chrome.action.setBadgeText({
-        text: ""
-      });
-      return;
-    }
-    await setStoredUpdateInfo({
-      latestVersion: latest.version,
-      releaseUrl: latest.url,
-      checkedAt: Date.now()
-    });
-    await chrome.action.setBadgeText({
-      text: "1"
-    });
-    await chrome.action.setBadgeBackgroundColor({
-      color: "#dc2626"
-    });
-  };
   chrome.runtime.onInstalled.addListener(details => {
     if (details.reason === "install") chrome.tabs.create({
       url: chrome.runtime.getManifest().homepage_url
@@ -82,10 +87,10 @@
     chrome.alarms.create(UPDATE_CHECK_ALARM, {
       periodInMinutes: UPDATE_CHECK_PERIOD_MINUTES
     });
-    void checkForUpdate();
+    void performUpdateCheck();
   });
-  chrome.runtime.onStartup.addListener(() => void checkForUpdate());
+  chrome.runtime.onStartup.addListener(() => void performUpdateCheck());
   chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === UPDATE_CHECK_ALARM) void checkForUpdate();
+    if (alarm.name === UPDATE_CHECK_ALARM) void performUpdateCheck();
   });
 })();

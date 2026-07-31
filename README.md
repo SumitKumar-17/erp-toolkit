@@ -33,7 +33,7 @@ No Node.js, no `npm install`, no build step — just download and load the folde
 5. Click **Load unpacked** and select the `extension` folder.
 6. Done — click the toolbar icon to open the popup and set up your login details.
 
-Since this isn't distributed through the Chrome Web Store, the browser can't silently auto-update it for you. Instead, the extension checks GitHub in the background and shows a small banner in the popup ("Update available: vX.Y.Z") whenever a newer build has shipped — click it to grab the new ZIP and repeat step 5 (just re-select the same `extension` folder in **Load unpacked**; it'll refresh in place).
+Since this isn't distributed through the Chrome Web Store, the browser can't silently auto-update it for you — no extension loaded via **Load unpacked** can be, that's a Chrome platform restriction, not something specific to this extension. Instead, it checks GitHub in the background (and every time you open the popup) and shows a banner ("Update available: vX.Y.Z") as soon as a new version has shipped. Click **Download update** and it does two things for you automatically: downloads the new ZIP, and opens `chrome://extensions` to the right place — from there it's just unzip, then click the reload icon next to ERP Toolkit.
 
 ## Setting it up
 
@@ -55,6 +55,7 @@ Since this isn't distributed through the Chrome Web Store, the browser can't sil
 | `storage`                         | Saves your (optionally encrypted) credentials and preferences locally.                                                             |
 | `scripting`                       | Re-injects the deadline-highlighter content script if the popup is opened before it's had a chance to load on an already-open tab. |
 | `alarms`                          | Schedules the periodic "is there a newer release?" check.                                                                          |
+| `downloads`                       | Lets the "Download update" button in the popup save a new release's ZIP straight to your Downloads folder.                         |
 | Host access to `erp.iitkgp.ac.in` | Required to run the login-autofill and deadline-highlighter content scripts, and to fetch your security questions.                 |
 
 The background service worker also calls the public `api.github.com` releases endpoint to check for updates — no extra host permission is needed for that since GitHub's API allows anonymous cross-origin reads.
