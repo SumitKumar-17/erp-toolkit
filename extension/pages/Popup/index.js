@@ -395,12 +395,12 @@
     const notesLink = document.getElementById("updateBannerNotes");
     text.textContent = `Update available: v${update.latestVersion}`;
     notesLink.href = update.releaseUrl;
-    banner.hidden = false;
+    banner.classList.remove("hidden");
     actionBtn.addEventListener("click", () => {
       void downloadUpdate(update.downloadUrl, update.releaseUrl, update.latestVersion);
     });
     dismissBtn.addEventListener("click", () => {
-      banner.hidden = true;
+      banner.classList.add("hidden");
       void dismissUpdate(update.latestVersion);
     });
   }

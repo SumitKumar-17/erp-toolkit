@@ -61,14 +61,18 @@ async function initUpdateBanner(): Promise<void> {
 
   text.textContent = `Update available: v${update.latestVersion}`
   notesLink.href = update.releaseUrl
-  banner.hidden = false
+  // Tailwind's `flex` utility on .update-banner would otherwise override the
+  // native `hidden` attribute's `display: none` (equal specificity, author
+  // styles beat the UA stylesheet) -- toggling Tailwind's own `.hidden`
+  // utility class instead keeps this working regardless of that class.
+  banner.classList.remove('hidden')
 
   actionBtn.addEventListener('click', () => {
     void downloadUpdate(update.downloadUrl, update.releaseUrl, update.latestVersion)
   })
 
   dismissBtn.addEventListener('click', () => {
-    banner.hidden = true
+    banner.classList.add('hidden')
     void dismissUpdate(update.latestVersion)
   })
 }

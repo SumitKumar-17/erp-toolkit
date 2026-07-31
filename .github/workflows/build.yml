@@ -12,14 +12,14 @@ on:
       - 'package-lock.json'
   workflow_dispatch:
 
-# Only one release build should ever run at a time -- if a push lands while
-# a previous run is still building, that older run's "git push" of the
-# version bump would race against (and lose to) whichever one finishes
-# first. Queueing here means each push waits for the previous run's commit
-# to land before it starts, so it always bumps from the true latest state.
+# If a push lands while a previous run is still building, that older run is
+# already stale -- its diff is a subset of what the new push has. Canceling
+# it instead of letting it finish avoids creating a throwaway release for
+# code nobody will ever install, and avoids two runs' git-push-back steps
+# racing each other.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
