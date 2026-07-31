@@ -130,6 +130,12 @@
   font-weight: 600;
 }
 
+.erp-toolkit-legend__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .erp-toolkit-legend__icon-btn {
   display: flex;
   align-items: center;

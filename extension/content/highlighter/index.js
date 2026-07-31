@@ -188,7 +188,7 @@
     constructor(colors, callbacks) {
       this.root = document.createElement("div");
       this.root.id = WIDGET_ID;
-      this.root.innerHTML = `\n      <div class="erp-toolkit-legend__header" data-drag-handle>\n        <div class="erp-toolkit-legend__title">\n          <span aria-hidden="true">🎯</span>\n          <span>Deadline Highlighter</span>\n        </div>\n        <button type="button" class="erp-toolkit-legend__icon-btn" data-action="toggle" title="Collapse">\n          <span aria-hidden="true" data-toggle-glyph>&minus;</span>\n        </button>\n      </div>\n      <div class="erp-toolkit-legend__body">\n        <div class="erp-toolkit-legend__status">\n          <span class="erp-toolkit-legend__dot" data-status-dot></span>\n          <span data-status-text>Inactive</span>\n        </div>\n        <p class="erp-toolkit-legend__stats" data-stats-text>0 rows processed</p>\n        <div class="erp-toolkit-legend__controls">\n          <button type="button" class="erp-toolkit-legend__btn erp-toolkit-legend__btn--start" data-action="start">\n            <span aria-hidden="true">&#9654;</span> Start\n          </button>\n          <button type="button" class="erp-toolkit-legend__btn erp-toolkit-legend__btn--stop" data-action="stop">\n            <span aria-hidden="true">&#10074;&#10074;</span> Stop\n          </button>\n          <button type="button" class="erp-toolkit-legend__btn erp-toolkit-legend__btn--clear" data-action="clear">\n            <span aria-hidden="true">&#128465;</span> Clear\n          </button>\n        </div>\n        <div class="erp-toolkit-legend__swatches">\n          <span><i style="background:${colors.upcoming}"></i>Upcoming (&gt;24h)</span>\n          <span><i style="background:${colors.warning}"></i>1 day left</span>\n          <span><i style="background:${colors.urgent}"></i>6 hours or less</span>\n          <span><i style="background:${colors.overdue}"></i>Overdue</span>\n        </div>\n      </div>\n    `;
+      this.root.innerHTML = `\n      <div class="erp-toolkit-legend__header" data-drag-handle>\n        <div class="erp-toolkit-legend__title">\n          <span aria-hidden="true">🎯</span>\n          <span>Deadline Highlighter</span>\n        </div>\n        <div class="erp-toolkit-legend__header-actions">\n          <button type="button" class="erp-toolkit-legend__icon-btn" data-action="open-popup" title="Open ERP Toolkit">\n            <span aria-hidden="true">&#9881;</span>\n          </button>\n          <button type="button" class="erp-toolkit-legend__icon-btn" data-action="toggle" title="Collapse">\n            <span aria-hidden="true" data-toggle-glyph>&minus;</span>\n          </button>\n        </div>\n      </div>\n      <div class="erp-toolkit-legend__body">\n        <div class="erp-toolkit-legend__status">\n          <span class="erp-toolkit-legend__dot" data-status-dot></span>\n          <span data-status-text>Inactive</span>\n        </div>\n        <p class="erp-toolkit-legend__stats" data-stats-text>0 rows processed</p>\n        <div class="erp-toolkit-legend__controls">\n          <button type="button" class="erp-toolkit-legend__btn erp-toolkit-legend__btn--start" data-action="start">\n            <span aria-hidden="true">&#9654;</span> Start\n          </button>\n          <button type="button" class="erp-toolkit-legend__btn erp-toolkit-legend__btn--stop" data-action="stop">\n            <span aria-hidden="true">&#10074;&#10074;</span> Stop\n          </button>\n          <button type="button" class="erp-toolkit-legend__btn erp-toolkit-legend__btn--clear" data-action="clear">\n            <span aria-hidden="true">&#128465;</span> Clear\n          </button>\n        </div>\n        <div class="erp-toolkit-legend__swatches">\n          <span><i style="background:${colors.upcoming}"></i>Upcoming (&gt;24h)</span>\n          <span><i style="background:${colors.warning}"></i>1 day left</span>\n          <span><i style="background:${colors.urgent}"></i>6 hours or less</span>\n          <span><i style="background:${colors.overdue}"></i>Overdue</span>\n        </div>\n      </div>\n    `;
       this.bindEvents(callbacks);
       this.makeDraggable();
     }
@@ -215,6 +215,9 @@
       this.root.querySelector('[data-action="start"]')?.addEventListener("click", onStart);
       this.root.querySelector('[data-action="stop"]')?.addEventListener("click", onStop);
       this.root.querySelector('[data-action="clear"]')?.addEventListener("click", onClear);
+      this.root.querySelector('[data-action="open-popup"]')?.addEventListener("click", () => {
+        window.open(chrome.runtime.getURL("pages/Popup/index.html"), "_blank", "noopener");
+      });
     }
     toggleCollapsed() {
       this.collapsed = !this.collapsed;
@@ -241,7 +244,7 @@
         document.removeEventListener("pointerup", onPointerUp);
       };
       handle.addEventListener("pointerdown", event => {
-        if (event.target.closest('[data-action="toggle"]')) return;
+        if (event.target.closest("button")) return;
         const rect = this.root.getBoundingClientRect();
         offsetX = event.clientX - rect.left;
         offsetY = event.clientY - rect.top;

@@ -38,9 +38,14 @@ export class LegendWidget {
           <span aria-hidden="true">🎯</span>
           <span>Deadline Highlighter</span>
         </div>
-        <button type="button" class="erp-toolkit-legend__icon-btn" data-action="toggle" title="Collapse">
-          <span aria-hidden="true" data-toggle-glyph>&minus;</span>
-        </button>
+        <div class="erp-toolkit-legend__header-actions">
+          <button type="button" class="erp-toolkit-legend__icon-btn" data-action="open-popup" title="Open ERP Toolkit">
+            <span aria-hidden="true">&#9881;</span>
+          </button>
+          <button type="button" class="erp-toolkit-legend__icon-btn" data-action="toggle" title="Collapse">
+            <span aria-hidden="true" data-toggle-glyph>&minus;</span>
+          </button>
+        </div>
       </div>
       <div class="erp-toolkit-legend__body">
         <div class="erp-toolkit-legend__status">
@@ -101,6 +106,12 @@ export class LegendWidget {
     this.root.querySelector('[data-action="start"]')?.addEventListener('click', onStart)
     this.root.querySelector('[data-action="stop"]')?.addEventListener('click', onStop)
     this.root.querySelector('[data-action="clear"]')?.addEventListener('click', onClear)
+    this.root.querySelector('[data-action="open-popup"]')?.addEventListener('click', () => {
+      // Content scripts can't invoke the toolbar popup directly (no
+      // chrome.action access) -- opening the same page as a regular tab
+      // works everywhere and needs no extra permission.
+      window.open(chrome.runtime.getURL('pages/Popup/index.html'), '_blank', 'noopener')
+    })
   }
 
   private toggleCollapsed(): void {
@@ -134,7 +145,7 @@ export class LegendWidget {
     }
 
     handle.addEventListener('pointerdown', (event) => {
-      if ((event.target as HTMLElement).closest('[data-action="toggle"]')) return
+      if ((event.target as HTMLElement).closest('button')) return
 
       const rect = this.root.getBoundingClientRect()
       offsetX = event.clientX - rect.left

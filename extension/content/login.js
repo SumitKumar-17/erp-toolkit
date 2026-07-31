@@ -98,12 +98,24 @@
     return dec.decode(decrypted);
   };
   const BANNER_ID = "erp-toolkit-login-banner";
-  const showBannerMessage = (message, color = "#2563eb") => {
+  const showBannerMessage = (message, color = "#2563eb", showOpenButton = false) => {
     document.getElementById(BANNER_ID)?.remove();
     const banner = document.createElement("div");
     banner.id = BANNER_ID;
-    banner.textContent = message;
-    banner.setAttribute("style", [ `background: linear-gradient(to right, ${color}, #ed4e50)`, "color: #fff", "font-weight: 500", "width: 100%", "height: 35px", "text-align: center", "display: flex", "justify-content: center", "align-items: center" ].join(";"));
+    banner.setAttribute("style", [ `background: linear-gradient(to right, ${color}, #ed4e50)`, "color: #fff", "font-weight: 500", "width: 100%", "min-height: 35px", "text-align: center", "display: flex", "justify-content: center", "align-items: center", "gap: 12px", "padding: 4px 12px" ].join(";"));
+    const text = document.createElement("span");
+    text.textContent = message;
+    banner.append(text);
+    if (showOpenButton) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "Open ERP Toolkit";
+      button.setAttribute("style", [ "background: rgba(255,255,255,0.2)", "color: #fff", "border: 1px solid rgba(255,255,255,0.4)", "border-radius: 6px", "padding: 4px 10px", "font-size: 13px", "cursor: pointer", "flex-shrink: 0" ].join(";"));
+      button.addEventListener("click", () => {
+        window.open(chrome.runtime.getURL("pages/Popup/index.html"), "_blank", "noopener");
+      });
+      banner.append(button);
+    }
     document.body.prepend(banner);
   };
   const bannerMessage = showBannerMessage;
@@ -160,7 +172,7 @@
   const autoLogin = async () => {
     const credential = await getCredential();
     if (!credential.username) {
-      bannerMessage("ERP Toolkit is installed — add your login details from the extension popup.", "#a16207");
+      bannerMessage("ERP Toolkit is installed — add your login details to get started.", "#a16207", true);
       return;
     }
     if (!credential.autoLogin) {
@@ -168,7 +180,7 @@
       return;
     }
     if (utils_validateCredentials(credential) === FieldValidationStatus.SomeFieldIsEmpty) {
-      bannerMessage("Please finish setting up your details in the extension popup.", "#4b5563");
+      bannerMessage("Please finish setting up your login details.", "#4b5563", true);
       return;
     }
     const usernameInput = document.getElementById("user_id");

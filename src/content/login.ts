@@ -13,7 +13,7 @@ const autoLogin = async (): Promise<void> => {
   const credential = await getCredential()
 
   if (!credential.username) {
-    showBannerMessage('ERP Toolkit is installed — add your login details from the extension popup.', '#a16207')
+    showBannerMessage('ERP Toolkit is installed — add your login details to get started.', '#a16207', true)
     return
   }
 
@@ -23,7 +23,7 @@ const autoLogin = async (): Promise<void> => {
   }
 
   if (validateCredentials(credential) === FieldValidationStatus.SomeFieldIsEmpty) {
-    showBannerMessage('Please finish setting up your details in the extension popup.', '#4b5563')
+    showBannerMessage('Please finish setting up your login details.', '#4b5563', true)
     return
   }
 
