@@ -1,12 +1,14 @@
+import openToolkitOverlay from 'utils/toolkitOverlay'
+
 const BANNER_ID = 'erp-toolkit-login-banner'
 
 /**
  * Shows a full-width status banner at the top of the ERP login page while
  * autofill/autologin is in progress (or has failed).
  *
- * `showOpenButton` adds a button that opens the popup UI as a regular tab
- * (`window.open` on the extension's own page) — a manual way in for anyone
- * whose toolbar icon isn't opening the popup dropdown for some reason.
+ * `showOpenButton` adds a button that opens the popup UI as an in-page
+ * overlay — a manual way in for anyone whose toolbar icon isn't opening the
+ * popup dropdown for some reason.
  */
 const showBannerMessage = (message: string, color = '#2563eb', showOpenButton = false): void => {
   document.getElementById(BANNER_ID)?.remove()
@@ -51,9 +53,7 @@ const showBannerMessage = (message: string, color = '#2563eb', showOpenButton = 
         'flex-shrink: 0'
       ].join(';')
     )
-    button.addEventListener('click', () => {
-      window.open(chrome.runtime.getURL('pages/Popup/index.html'), '_blank', 'noopener')
-    })
+    button.addEventListener('click', openToolkitOverlay)
     banner.append(button)
   }
 

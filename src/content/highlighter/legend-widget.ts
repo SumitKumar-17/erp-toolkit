@@ -1,4 +1,5 @@
 import type { DeadlineColors } from 'models/HighlighterSettings'
+import openToolkitOverlay from 'utils/toolkitOverlay'
 
 export interface LegendCallbacks {
   onStart: () => void
@@ -106,12 +107,7 @@ export class LegendWidget {
     this.root.querySelector('[data-action="start"]')?.addEventListener('click', onStart)
     this.root.querySelector('[data-action="stop"]')?.addEventListener('click', onStop)
     this.root.querySelector('[data-action="clear"]')?.addEventListener('click', onClear)
-    this.root.querySelector('[data-action="open-popup"]')?.addEventListener('click', () => {
-      // Content scripts can't invoke the toolbar popup directly (no
-      // chrome.action access) -- opening the same page as a regular tab
-      // works everywhere and needs no extra permission.
-      window.open(chrome.runtime.getURL('pages/Popup/index.html'), '_blank', 'noopener')
-    })
+    this.root.querySelector('[data-action="open-popup"]')?.addEventListener('click', openToolkitOverlay)
   }
 
   private toggleCollapsed(): void {

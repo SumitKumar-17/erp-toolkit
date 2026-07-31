@@ -97,6 +97,34 @@
     }, key, cipherText);
     return dec.decode(decrypted);
   };
+  const OVERLAY_ID = "erp-toolkit-overlay";
+  const openToolkitOverlay = () => {
+    if (document.getElementById(OVERLAY_ID)) return;
+    const dialog = document.createElement("dialog");
+    dialog.id = OVERLAY_ID;
+    dialog.style.cssText = "padding:0;border:none;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.45)";
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = "position:relative;line-height:0";
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.title = "Close";
+    closeBtn.textContent = "✕";
+    closeBtn.style.cssText = [ "position:absolute", "top:8px", "right:8px", "z-index:1", "width:26px", "height:26px", "border-radius:9999px", "border:none", "background:rgba(0,0,0,0.55)", "color:#fff", "cursor:pointer", "font-size:13px", "line-height:1" ].join(";");
+    closeBtn.addEventListener("click", () => dialog.close());
+    const iframe = document.createElement("iframe");
+    iframe.src = chrome.runtime.getURL("pages/Popup/index.html");
+    iframe.style.cssText = "width:360px;height:600px;border:none;display:block";
+    iframe.title = "ERP Toolkit";
+    wrapper.append(closeBtn, iframe);
+    dialog.append(wrapper);
+    dialog.addEventListener("click", event => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener("close", () => dialog.remove());
+    document.body.append(dialog);
+    dialog.showModal();
+  };
+  const toolkitOverlay = openToolkitOverlay;
   const BANNER_ID = "erp-toolkit-login-banner";
   const showBannerMessage = (message, color = "#2563eb", showOpenButton = false) => {
     document.getElementById(BANNER_ID)?.remove();
@@ -111,9 +139,7 @@
       button.type = "button";
       button.textContent = "Open ERP Toolkit";
       button.setAttribute("style", [ "background: rgba(255,255,255,0.2)", "color: #fff", "border: 1px solid rgba(255,255,255,0.4)", "border-radius: 6px", "padding: 4px 10px", "font-size: 13px", "cursor: pointer", "flex-shrink: 0" ].join(";"));
-      button.addEventListener("click", () => {
-        window.open(chrome.runtime.getURL("pages/Popup/index.html"), "_blank", "noopener");
-      });
+      button.addEventListener("click", toolkitOverlay);
       banner.append(button);
     }
     document.body.prepend(banner);
