@@ -17,6 +17,24 @@ void initCredentialForm()
 void initHighlighterPanel()
 void initUpdateBanner()
 initFooterVersion()
+void closeAnyOpenOverlay()
+
+/**
+ * If this is the real toolbar dropdown (not our own overlay's iframe, which
+ * embeds this exact same page — window.self !== window.top there) and the
+ * page you're on already has our in-page overlay open, tell it to close so
+ * you don't end up looking at both at once.
+ */
+async function closeAnyOpenOverlay(): Promise<void> {
+  if (window.self !== window.top) return
+
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+  if (!tab?.id) return
+
+  chrome.tabs.sendMessage(tab.id, { action: 'toolkit:close-overlay' }).catch(() => {
+    /* no content script listening on this tab — nothing to close */
+  })
+}
 
 /** Always-visible footer readout — set immediately, no network round-trip needed. */
 function initFooterVersion(): void {

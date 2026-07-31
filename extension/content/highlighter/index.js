@@ -182,32 +182,63 @@
     }
   }
   const OVERLAY_ID = "erp-toolkit-overlay";
+  const getOverlay = () => document.getElementById(OVERLAY_ID);
+  const makeDraggable = (dialog, handle) => {
+    let offsetX = 0;
+    let offsetY = 0;
+    let dragging = false;
+    const onPointerMove = event => {
+      if (!dragging) return;
+      dialog.style.margin = "0";
+      dialog.style.left = `${event.clientX - offsetX}px`;
+      dialog.style.top = `${event.clientY - offsetY}px`;
+    };
+    const onPointerUp = () => {
+      dragging = false;
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
+    };
+    handle.addEventListener("pointerdown", event => {
+      if (event.target.closest("button")) return;
+      const rect = dialog.getBoundingClientRect();
+      offsetX = event.clientX - rect.left;
+      offsetY = event.clientY - rect.top;
+      dragging = true;
+      document.addEventListener("pointermove", onPointerMove);
+      document.addEventListener("pointerup", onPointerUp);
+    });
+  };
   const openToolkitOverlay = () => {
-    if (document.getElementById(OVERLAY_ID)) return;
+    if (getOverlay()) return;
     const dialog = document.createElement("dialog");
     dialog.id = OVERLAY_ID;
     dialog.style.cssText = "padding:0;border:none;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.45)";
-    const wrapper = document.createElement("div");
-    wrapper.style.cssText = "position:relative;line-height:0";
+    const titlebar = document.createElement("div");
+    titlebar.style.cssText = [ "display:flex", "align-items:center", "justify-content:space-between", "gap:8px", "padding:6px 6px 6px 12px", "background:#4338ca", "color:#fff", "font:600 13px system-ui,sans-serif", "cursor:grab", "user-select:none" ].join(";");
+    titlebar.innerHTML = `<span>ERP Toolkit</span>`;
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
     closeBtn.title = "Close";
     closeBtn.textContent = "✕";
-    closeBtn.style.cssText = [ "position:absolute", "top:8px", "right:8px", "z-index:1", "width:26px", "height:26px", "border-radius:9999px", "border:none", "background:rgba(0,0,0,0.55)", "color:#fff", "cursor:pointer", "font-size:13px", "line-height:1" ].join(";");
+    closeBtn.style.cssText = [ "width:22px", "height:22px", "border-radius:9999px", "border:none", "background:rgba(255,255,255,0.2)", "color:#fff", "cursor:pointer", "font-size:12px", "line-height:1" ].join(";");
     closeBtn.addEventListener("click", () => dialog.close());
+    titlebar.append(closeBtn);
     const iframe = document.createElement("iframe");
     iframe.src = chrome.runtime.getURL("pages/Popup/index.html");
     iframe.style.cssText = "width:360px;height:600px;border:none;display:block";
     iframe.title = "ERP Toolkit";
-    wrapper.append(closeBtn, iframe);
-    dialog.append(wrapper);
+    dialog.append(titlebar, iframe);
     dialog.addEventListener("click", event => {
       if (event.target === dialog) dialog.close();
     });
     dialog.addEventListener("close", () => dialog.remove());
     document.body.append(dialog);
     dialog.showModal();
+    makeDraggable(dialog, titlebar);
   };
+  chrome.runtime.onMessage.addListener(message => {
+    if (typeof message === "object" && message !== null && message.action === "toolkit:close-overlay") getOverlay()?.close();
+  });
   const toolkitOverlay = openToolkitOverlay;
   const WIDGET_ID = "erp-toolkit-legend";
   class LegendWidget {

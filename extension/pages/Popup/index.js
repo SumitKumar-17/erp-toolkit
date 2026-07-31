@@ -366,6 +366,18 @@
   void initHighlighterPanel();
   void initUpdateBanner();
   initFooterVersion();
+  void closeAnyOpenOverlay();
+  async function closeAnyOpenOverlay() {
+    if (window.self !== window.top) return;
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    });
+    if (!tab?.id) return;
+    chrome.tabs.sendMessage(tab.id, {
+      action: "toolkit:close-overlay"
+    }).catch(() => {});
+  }
   function initFooterVersion() {
     const footerVersion = document.getElementById("footerVersion");
     footerVersion.textContent = `v${chrome.runtime.getManifest().version} · © 2026`;
